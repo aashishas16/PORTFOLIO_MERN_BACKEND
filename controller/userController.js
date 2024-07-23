@@ -7,15 +7,16 @@ import crypto from "crypto";
 import { sendEmail } from "../utils/sendEmail.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
- 
+ console.log("register")
   if (!req.files || Object.keys(req.files).length === 0) {
     return next(new ErrorHandler("Avatar Required!", 400));
   }
-  const { avatar, resume } = req.files;
+  const { avatar } = req.files;
 
   //POSTING AVATAR
+console.log(req.files)
   const cloudinaryResponseForAvatar = await cloudinary.uploader.upload(
-    avatar.tempFilePath,
+    avatar?.tempFilePath,
     { folder: "PORTFOLIO AVATAR" }
   );
 
@@ -26,19 +27,19 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     );
     return next(new ErrorHandler("Failed to upload avatar to Cloudinary", 500));
   }
-console.log(cloudinaryResponseForAvatar.public_id)
+
   //POSTING RESUME
-  const cloudinaryResponseForResume = await cloudinary.uploader.upload(
-    resume.tempFilePath,
-    { folder: "PORTFOLIO RESUME" }
-  );
-  if (!cloudinaryResponseForResume || cloudinaryResponseForResume.error) {
-    console.error(
-      "Cloudinary Error:",
-      cloudinaryResponseForResume.error || "Unknown Cloudinary error"
-    );
-    return next(new ErrorHandler("Failed to upload resume to Cloudinary", 500));
-  }
+  // const cloudinaryResponseForResume = await cloudinary.uploader.upload(
+  //   resume?.tempFilePath,
+  //   { folder: "PORTFOLIO RESUME" }
+  // );
+  // if (!cloudinaryResponseForResume || cloudinaryResponseForResume.error) {
+  //   console.error(
+  //     "Cloudinary Error:",
+  //     cloudinaryResponseForResume.error || "Unknown Cloudinary error"
+  //   );
+  //   return next(new ErrorHandler("Failed to upload resume to Cloudinary", 500));
+  // }
   const {
     fullName,
     email,
@@ -68,10 +69,10 @@ console.log(cloudinaryResponseForAvatar.public_id)
       public_id: cloudinaryResponseForAvatar.public_id, // Set your cloudinary public_id here
       url: cloudinaryResponseForAvatar.secure_url, // Set your cloudinary secure_url here
     },
-    resume: {
-      public_id: cloudinaryResponseForResume.public_id, // Set your cloudinary public_id here
-      url: cloudinaryResponseForResume.secure_url, // Set your cloudinary secure_url here
-    },
+    // resume: {
+    //   public_id: cloudinaryResponseForResume.public_id, // Set your cloudinary public_id here
+    //   url: cloudinaryResponseForResume.secure_url, // Set your cloudinary secure_url here
+    // },
   });
   console.log("working")
   generateToken(user, "Registered!", 201, res);
@@ -133,7 +134,7 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
     const profileImageId = user.avatar.public_id;
     await cloudinary.uploader.destroy(profileImageId);
     const newProfileImage = await cloudinary.uploader.upload(
-      avatar.tempFilePath,
+      avatar?.tempFilePath,
       {
         folder: "PORTFOLIO AVATAR",
       }
