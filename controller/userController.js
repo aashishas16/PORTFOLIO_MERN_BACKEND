@@ -8,25 +8,25 @@ import { sendEmail } from "../utils/sendEmail.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
  console.log("register")
-  if (!req.files || Object.keys(req.files).length === 0) {
-    return next(new ErrorHandler("Avatar Required!", 400));
-  }
-  const { avatar } = req.files;
+  // if (!req.files || Object.keys(req.files).length === 0) {
+  //   return next(new ErrorHandler("Avatar Required!", 400));
+  // }
+  // const { avatar } = req.files;
 
   //POSTING AVATAR
-console.log(req.files)
-  const cloudinaryResponseForAvatar = await cloudinary.uploader.upload(
-    avatar?.tempFilePath,
-    { folder: "PORTFOLIO AVATAR" }
-  );
+// console.log(req.files)
+  // const cloudinaryResponseForAvatar = await cloudinary.uploader.upload(
+  //   avatar?.tempFilePath,
+  //   { folder: "PORTFOLIO AVATAR" }
+  // );
 
-  if (!cloudinaryResponseForAvatar || cloudinaryResponseForAvatar.error) {
-    console.error(
-      "Cloudinary Error:",
-      cloudinaryResponseForAvatar.error || "Unknown Cloudinary error"
-    );
-    return next(new ErrorHandler("Failed to upload avatar to Cloudinary", 500));
-  }
+  // if (!cloudinaryResponseForAvatar || cloudinaryResponseForAvatar.error) {
+  //   console.error(
+  //     "Cloudinary Error:",
+  //     cloudinaryResponseForAvatar.error || "Unknown Cloudinary error"
+  //   );
+  //   return next(new ErrorHandler("Failed to upload avatar to Cloudinary", 500));
+  // }
 
   //POSTING RESUME
   // const cloudinaryResponseForResume = await cloudinary.uploader.upload(
@@ -65,10 +65,10 @@ console.log(req.files)
     twitterURL,
     facebookURL,
     linkedInURL,
-    avatar: {
-      public_id: cloudinaryResponseForAvatar.public_id, // Set your cloudinary public_id here
-      url: cloudinaryResponseForAvatar.secure_url, // Set your cloudinary secure_url here
-    },
+    // avatar: {
+    //   public_id: cloudinaryResponseForAvatar.public_id, // Set your cloudinary public_id here
+    //   url: cloudinaryResponseForAvatar.secure_url, // Set your cloudinary secure_url here
+    // },
     // resume: {
     //   public_id: cloudinaryResponseForResume.public_id, // Set your cloudinary public_id here
     //   url: cloudinaryResponseForResume.secure_url, // Set your cloudinary secure_url here
