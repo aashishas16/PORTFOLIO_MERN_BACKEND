@@ -15,11 +15,16 @@ import projectRouter from "./routes/projectRouter.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
+app.use( (req, res, next) => {
+      res.header('Access-Control-Allow-Credentials', true);
+  next();
+})
 app.use(
   cors({
     origin: ["http://localhost:5173" ,"http://localhost:5174"],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+    
   })
 );
 
