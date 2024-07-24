@@ -15,10 +15,10 @@ import projectRouter from "./routes/projectRouter.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
-
+const allowedOrigins = ["https://protfolio-dashbord.vercel.app" ,"http://localhost:5173" ,"http://localhost:5174" , "https://main-portfolio-iota-gold.vercel.app" ]
 app.use(
   cors({
-    origin: ["http://localhost:5173" ,"http://localhost:5174"],
+    origin: allowedOrigins,
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     
