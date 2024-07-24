@@ -19,30 +19,35 @@ const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
 
 
 
-app.use(
-  cors({
-    origin: ['http://localhost:5174', 'http://localhost:5173'],
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
+// app.use(
+//   cors({
+//     origin: ['http://localhost:5174', 'http://localhost:5173'],
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
     
-  })
-);
+//   })
+// );
 // const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-deployed-frontend.com'];
 
 
-app.use( (req, res , next) => {
-  const origin = req.headers.origin;
-console.log(origin)
-  if (allowedOrigins.includes(origin)) {
-    console.log(origin)
-    res.setHeader('Access-Control-Allow-Origin', origin);
-  } else {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-  }
+// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-deployed-frontend.com'];
 
- 
-  next()
-})
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Check if the origin is in the allowedOrigins array
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Enable cookies and other credentials
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
+};
+
+// Use the cors middleware
+app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
