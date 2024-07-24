@@ -15,19 +15,33 @@ import projectRouter from "./routes/projectRouter.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
+const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
+
+
 
 app.use(
   cors({
-    origin: ["http://localhost:5173" ,"http://localhost:5174"],
+    origin: ['http://localhost:5174', 'http://localhost:5173'],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
     
   })
 );
-app.use( (req, res, next) => {
-  res.header('Access-Control-Allow-Credentials', true);
-  console.log("allowing")
-next();
+// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-deployed-frontend.com'];
+
+
+app.use( (req, res , next) => {
+  const origin = req.headers.origin;
+console.log(origin)
+  if (allowedOrigins.includes(origin)) {
+    console.log(origin)
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  } else {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+  }
+
+ 
+  next()
 })
 app.use(cookieParser());
 app.use(express.json());
