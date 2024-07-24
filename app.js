@@ -15,39 +15,31 @@ import projectRouter from "./routes/projectRouter.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
-const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174'];
 
-
-
-// app.use(
-//   cors({
-//     origin: ['http://localhost:5174', 'http://localhost:5173'],
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
+app.use(
+  cors({
+    origin: ["http://localhost:5173" ,"http://localhost:5174"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
     
-//   })
-// );
-// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-deployed-frontend.com'];
-
-
-// const allowedOrigins = ['http://localhost:5173', 'http://localhost:5174', 'https://your-deployed-frontend.com'];
-
-const corsOptions = {
-  origin: (origin, callback) => {
-    // Check if the origin is in the allowedOrigins array
-    if (allowedOrigins.includes(origin) || !origin) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, // Enable cookies and other credentials
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "Authorization"],
-};
-
-// Use the cors middleware
-app.use(cors(corsOptions));
+  })
+);
+app.use((req, res , next) => {
+  res.setHeader('Access-Control-Allow-Credentials', true)
+  // res.setHeader('Access-Control-Allow-Origin', '*')
+  // another common pattern
+  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  )
+  if (req.method === 'OPTIONS') {
+    res.status(200).end()
+    return
+  }
+  next()
+})
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
