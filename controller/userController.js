@@ -53,6 +53,18 @@ export const register = catchAsyncErrors(async (req, res, next) => {
     facebookURL,
     linkedInURL,
   } = req.body;
+  const existingUser = await User.findOne({
+    $or: [{ email }, { phone }]
+  });
+  
+  if (existingUser) {
+    return res.status(400).json({
+      success: false,
+      message: existingUser.email === email
+        ? "Email already exists!"
+        : "Phone number already exists!"
+    });
+  }
   const user = await User.create({
     fullName,
     email,
@@ -80,6 +92,8 @@ export const register = catchAsyncErrors(async (req, res, next) => {
 
 export const login = catchAsyncErrors(async (req, res, next) => {
   const { email, password } = req.body;
+  console.log("this is email and password")
+  console.log(email ,password)
   if (!email || !password) {
     return next(new ErrorHandler("Provide Email And Password!", 400));
   }
@@ -132,9 +146,14 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   };
   if (req.files && req.files.avatar) {
     const avatar = req.files.avatar;
+    console.log(avatar)
+
     const user = await User.findById(req.user.id);
-    const profileImageId = user.avatar.public_id;
-    await cloudinary.uploader.destroy(profileImageId);
+    const profileImageId = user?.avatar?.public_id;
+    if(profileImageId) {
+      await cloudinary.uploader.destroy(profileImageId);
+
+    }
     const newProfileImage = await cloudinary.uploader.upload(
       avatar?.tempFilePath,
       {
@@ -150,7 +169,7 @@ export const updateProfile = catchAsyncErrors(async (req, res, next) => {
   if (req.files && req.files.resume) {
     const resume = req.files.resume;
     const user = await User.findById(req.user.id);
-    const resumeFileId = user.resume.public_id;
+    const resumeFileId = user?.resume?.public_id;
     if (resumeFileId) {
       await cloudinary.uploader.destroy(resumeFileId);
     }

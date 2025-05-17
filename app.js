@@ -15,7 +15,7 @@ import projectRouter from "./routes/projectRouter.js";
 const app = express();
 dotenv.config({ path: "./config/config.env" });
 
-const allowedOrigins = ["https://protfolio-dashbord.vercel.app" ,"http://localhost:5173" ,"http://localhost:5174" , "https://main-portfolio-iota-gold.vercel.app" ]
+const allowedOrigins = ["https://protfolio-dashbord.vercel.app" ,"http://localhost:5173" ,"http://localhost:5174" , "https://main-portfolio-iota-gold.vercel.app","*" ]
 app.use(
   cors({
     origin: allowedOrigins,
@@ -24,20 +24,42 @@ app.use(
     
   })
 );
-app.use((req, res , next) => {
-  res.setHeader('Access-Control-Allow-Credentials', true)
-  // res.setHeader('Access-Control-Allow-Origin', '*')
-  // another common pattern
-  res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+// app.use((req, res , next) => {
+//   res.setHeader('Access-Control-Allow-Credentials', true)
+//   res.setHeader('Access-Control-Allow-Origin', '*')
+//   // another common pattern
+//   // res.setHeader('Access-Control-Allow-Origin', req.headers.origin);
+  
+//   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
+//   res.setHeader(
+//     'Access-Control-Allow-Headers',
+//     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+//   )
+//   if (req.method === 'OPTIONS') {
+//     res.status(200).end()
+//     return
+//   }
+//   next()
+// })
+app.use((req, res, next) => {
+  const origin = req.headers.origin
+
+  if (allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin)
+  }
+
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
   res.setHeader(
     'Access-Control-Allow-Headers',
     'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
   )
+
   if (req.method === 'OPTIONS') {
     res.status(200).end()
     return
   }
+
   next()
 })
 app.use(cookieParser());

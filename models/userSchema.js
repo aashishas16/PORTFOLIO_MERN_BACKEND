@@ -12,10 +12,13 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, "Email Required!"],
+    unique:true
+    
   },
   phone: {
     type: String,
     required: [true, "Phone Required!"],
+    unique:true
   },
   aboutMe: {
     type: String,
@@ -49,7 +52,6 @@ const userSchema = new mongoose.Schema({
   },
   portfolioURL: {
     type: String,
-    required: [true, "Portfolio URL Required!"],
   },
   githubURL: {
     type: String,
